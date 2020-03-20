@@ -1,0 +1,29 @@
+{
+  "name": "aliddns",
+  "version": "1.0.0",
+  "description": "将alidns的动态修改dns解析记录接口包装方便路由器直接更新解析记录",
+  "main": "index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanyu0825/aliddns.git"
+  },
+  "keywords": [
+    "aliddns"
+  ],
+  "author": "yanyu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yanyu0825/aliddns/issues"
+  },
+  "homepage": "https://github.com/yanyu0825/aliddns#readme",
+  "dependencies": {
+    "@alicloud/pop-core": "^1.7.9"
+  },
+  "devDependencies": {
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
+  }
+}
