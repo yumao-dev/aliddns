@@ -18,6 +18,7 @@
             ],
             "env": {
                 // "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+                // "NODE_ENV": "release",
                 "NODE_ENV": "debug"
             }
         }
