@@ -1,4 +1,4 @@
-export interface AliddnsParam{
+export interface AliddnsParam {
     RecordId: string;
     RR: string;
     Type: 'A' | 'AAAA';
