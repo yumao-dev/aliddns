@@ -8,11 +8,12 @@ import { QueryParam } from './interface/settings';
 const log = LogFactory.create(Logtype.http);
 
 var server = createServer((req, res) => {
+    let reqaddress: string;
     new Promise<QueryParam>((resolve, reject) => {
         try {
             var url = parse(req.url || '');
-
             var params = queryParse(url.query || 's=1');
+            reqaddress = req.headers['x-real-ip'] as string;
             if (params && params.apiKey && params.apiSecret && params.domainName && params.type && params.ip) {
                 resolve(params as unknown as QueryParam);
             } else {
@@ -22,16 +23,16 @@ var server = createServer((req, res) => {
             reject(error);
         }
     }).then(result => {
-        return new DDNS(req.socket.remoteAddress).update(result);
+        return new DDNS(reqaddress).update(result);
     }).then(result => {
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(result));
-    }).catch(err => {
-        log.write(err, "Error", "更改DNS解析记录", req.socket.remoteAddress);
-
+    }).catch((err: Error) => {
+        if (err.message != '参数有误') {
+            log.write(err, "Error", "更改DNS解析记录", reqaddress);
+        }
         res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(false));
-
     });
 
 }).listen(process.env.PORT || 3000, () => {

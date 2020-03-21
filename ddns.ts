@@ -51,7 +51,7 @@ export class DDNS {
         let result = true;
         if (RRID.v6) {
             if (RRID.v6.value === param.ip) {
-                console.log(`您的域名{${param.domainName}},IPv6地址为：${param.ip}，没有发生变化，不需要修改解析记录`);
+                log.write(`您的域名{${param.domainName}},IPv6地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
             } else {
                 result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v6.rid, domain.RR, param.type, param.ip);
 
