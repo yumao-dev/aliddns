@@ -11,7 +11,7 @@ export interface QueryParam {
     apiKey: string;
     apiSecret: string;
     domainName: string;
-    type: 'A' | 'AAAA';
+    // type: 'A' | 'AAAA';
     ip: string;
 }
 

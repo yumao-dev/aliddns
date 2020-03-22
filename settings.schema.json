@@ -5,7 +5,6 @@
         "apiKey",
         "apiSecret",
         "domainName",
-        "type",
         "ip"
     ],
     "additionalProperties": false,

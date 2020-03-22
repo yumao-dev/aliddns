@@ -12,9 +12,12 @@ var server = createServer((req, res) => {
     new Promise<QueryParam>((resolve, reject) => {
         try {
             var url = parse(req.url || '');
-            var params = queryParse(url.query || 's=1');
+            var params = queryParse(url.query || '');
             reqaddress = req.headers['x-real-ip'] as string;
-            if (params && params.apiKey && params.apiSecret && params.domainName && params.type && params.ip) {
+            if (params&&params.apiKey&&params.apiSecret&&params.domainName) {
+                if (!params.ip) {
+                    params.ip = reqaddress;
+                }
                 resolve(params as unknown as QueryParam);
             } else {
                 reject(new Error('参数有误'));

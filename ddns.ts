@@ -2,6 +2,9 @@ import Core from "@alicloud/pop-core";
 import { LogFactory, Logtype } from "./helper/log/logfactory";
 import { AliyunResponse, DescribeDomainRecordsRsp, QueryParam } from "./interface";
 import { Validate } from "./validate";
+import { Address4, Address6, } from "ip-address";
+
+
 const log = LogFactory.create(Logtype.http);
 
 export class DDNS {
@@ -11,12 +14,12 @@ export class DDNS {
     public async update(param: QueryParam) {
         //判断参数（存在以及各式）;
 
-        const valid = await new Validate().validate(param);
+        let valid = await new Validate().validate(param);
 
         //更新域名记录
-        if (param.type === "A") {
+        if (new Address4(param.ip).isValid()) {
             return await this.updatev4(param)
-        } else if (param.type === "AAAA") {
+        } else if (new Address6(param.ip).isValid()) {
             return await this.updatev6(param)
         } else {
             throw new Error('只支持v4或者v6');
@@ -30,17 +33,17 @@ export class DDNS {
         if (RRID.v4) {
             //有v4的解析记录存在
             if (RRID.v4.value === param.ip) {
-                log.write(`您的域名{${param.domainName}},IPv4地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
+                log.write(`域名:${param.domainName},IPv4地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
             } else {
-                result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v4.rid, domain.RR, param.type, param.ip);
+                result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v4.rid, domain.RR, "A", param.ip);
 
-                log.write(`您的域名{${param.domainName}},IPv4地址为：${param.ip},結果:${result}`, "INFO", "修改解析记录", this.reqip);
+                log.write(`域名:${param.domainName},IPv4地址为：${param.ip},結果:${result}`, "Warring", "修改解析记录", this.reqip);
             }
         } else {
             //没有v4的解析记录存在
-            result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, param.type, param.ip);
+            result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, "A", param.ip);
 
-            log.write(`您的域名{${param.domainName}},IPv4地址为：${param.ip},結果:${result}`, "INFO", "添加解析记录", this.reqip);
+            log.write(`域名:${param.domainName},IPv4地址为：${param.ip},結果:${result}`, "Warring", "添加解析记录", this.reqip);
         }
         return result;
     }
@@ -51,16 +54,16 @@ export class DDNS {
         let result = true;
         if (RRID.v6) {
             if (RRID.v6.value === param.ip) {
-                log.write(`您的域名{${param.domainName}},IPv6地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
+                log.write(`域名:${param.domainName},IPv6地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
             } else {
-                result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v6.rid, domain.RR, param.type, param.ip);
+                result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v6.rid, domain.RR, "AAAA", param.ip);
 
-                log.write(`您的域名{${param.domainName}},IPv6地址为：${param.ip},結果:${result}`, "INFO", "修改解析记录", this.reqip);
+                log.write(`域名:${param.domainName},IPv6地址为：${param.ip},結果:${result}`, "Warring", "修改解析记录", this.reqip);
             }
         } else {
             //没有v4的解析记录存在
-            result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, param.type, param.ip);
-            log.write(`您的域名{${param.domainName}},IPv6地址为：${param.ip},結果:${result}`, "INFO", "添加解析记录", this.reqip);
+            result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, "AAAA", param.ip);
+            log.write(`域名:${param.domainName},IPv6地址为：${param.ip},結果:${result}`, "Warring", "添加解析记录", this.reqip);
         }
         return result;
     }
