@@ -14,11 +14,13 @@ var server = createServer((req, res) => {
             var url = parse(req.url || '');
             var params = queryParse(url.query || '');
             reqaddress = req.headers['x-real-ip'] as string;
-            if (params&&params.apiKey&&params.apiSecret&&params.domainName) {
-                if (!params.ip) {
-                    params.ip = reqaddress;
-                }
-                resolve(params as unknown as QueryParam);
+            if (params && params.apiKey && params.apiSecret && params.domainName) {
+                resolve({
+                    apiKey: params.apiKey,
+                    apiSecret: params.apiSecret,
+                    domainName: params.domainName,
+                    ip: params.ip || reqaddress
+                } as QueryParam);
             } else {
                 reject(new Error('参数有误'));
             }
