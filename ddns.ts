@@ -1,6 +1,6 @@
 import Core from "@alicloud/pop-core";
-import { LogHelper } from "helper/helper/loghelper";
 import { Address4, Address6 } from "ip-address";
+import { LogHelper } from "yanyu-helper";
 import {
   AliyunResponse,
   DescribeDomainRecordsRsp,

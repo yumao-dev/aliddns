@@ -1,7 +1,7 @@
-import { LogHelper } from "helper";
 import { createServer } from "http";
 import { parse as queryParse } from "querystring";
 import { parse } from "url";
+import { LogHelper } from "yanyu-helper";
 import { DDNS } from "./ddns";
 import { QueryParam } from "./interface/settings";
 const log = LogHelper.create();

@@ -4,8 +4,7 @@
   "description": "将alidns的动态修改dns解析记录接口包装方便路由器直接更新解析记录",
   "main": "index",
   "scripts": {
-    "test": "mocha 'test/*.ts'",
-    "cover": "nyc --reporter=html npm run test"
+    "test": "mocha 'test/*.ts'"
   },
   "repository": {
     "type": "git",
@@ -22,7 +21,7 @@
   "homepage": "https://github.com/yumao-dev/aliddns#readme",
   "dependencies": {
     "ajv": "^8.12.0",
-    "yanyu-helper": "^1.0.20",
+    "yanyu-helper": "^1.0.21",
     "ip-address": "^8.1.0"
   },
   "devDependencies": {
