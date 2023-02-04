@@ -19,6 +19,7 @@ EXPOSE 3000
 
 WORKDIR /usr/src/app
 COPY ./package*.json .
+COPY ./settings.schema.json .
 # COPY ./.npmrc .
 # COPY ./public ./public
 RUN npm install --production
