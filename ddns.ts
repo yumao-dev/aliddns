@@ -1,14 +1,10 @@
 import Core from "@alicloud/pop-core";
 import { Address4, Address6 } from "ip-address";
-import { LogHelper } from "yanyu-helper";
-import {
-  AliyunResponse,
-  DescribeDomainRecordsRsp,
-  QueryParam,
-} from "./interface";
+import { LogHelper, Logtype } from "yanyu-helper";
+import { AliyunResponse, DescribeDomainRecordsRsp, QueryParam } from "./interface";
 import { Validate } from "./validate";
 
-const log = LogHelper.create();
+const log = LogHelper.create(Logtype.http);
 
 export class DDNS {
   constructor(private reqip: string | undefined) {}
@@ -30,31 +26,14 @@ export class DDNS {
 
   private async updatev4(param: QueryParam) {
     let domain = await new Validate().formatDomain(param.domainName);
-    const RRID = await this.DescribeDomainRecords(
-      param.apiKey,
-      param.apiSecret,
-      domain.domain,
-      domain.RR
-    );
+    const RRID = await this.DescribeDomainRecords(param.apiKey, param.apiSecret, domain.domain, domain.RR);
     let result = true;
     if (RRID.v4) {
       //有v4的解析记录存在
       if (RRID.v4.value === param.ip) {
-        log.write(
-          `域名:${param.domainName},IPv4地址为：${param.ip}`,
-          "INFO",
-          "不需要修改解析记录",
-          this.reqip
-        );
+        log.write(`域名:${param.domainName},IPv4地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
       } else {
-        result = await this.UpdateDomainRecord(
-          param.apiKey,
-          param.apiSecret,
-          RRID.v4.rid,
-          domain.RR,
-          "A",
-          param.ip
-        );
+        result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v4.rid, domain.RR, "A", param.ip);
 
         log.write(
           `域名:${param.domainName},IPv4地址为：${param.ip},結果:${result}`,
@@ -65,14 +44,7 @@ export class DDNS {
       }
     } else {
       //没有v4的解析记录存在
-      result = await this.AddDomainRecord(
-        param.apiKey,
-        param.apiSecret,
-        domain.domain,
-        domain.RR,
-        "A",
-        param.ip
-      );
+      result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, "A", param.ip);
 
       log.write(
         `域名:${param.domainName},IPv4地址为：${param.ip},結果:${result}`,
@@ -86,30 +58,13 @@ export class DDNS {
 
   private async updatev6(param: QueryParam) {
     let domain = await new Validate().formatDomain(param.domainName);
-    const RRID = await this.DescribeDomainRecords(
-      param.apiKey,
-      param.apiSecret,
-      domain.domain,
-      domain.RR
-    );
+    const RRID = await this.DescribeDomainRecords(param.apiKey, param.apiSecret, domain.domain, domain.RR);
     let result = true;
     if (RRID.v6) {
       if (RRID.v6.value === param.ip) {
-        log.write(
-          `域名:${param.domainName},IPv6地址为：${param.ip}`,
-          "INFO",
-          "不需要修改解析记录",
-          this.reqip
-        );
+        log.write(`域名:${param.domainName},IPv6地址为：${param.ip}`, "INFO", "不需要修改解析记录", this.reqip);
       } else {
-        result = await this.UpdateDomainRecord(
-          param.apiKey,
-          param.apiSecret,
-          RRID.v6.rid,
-          domain.RR,
-          "AAAA",
-          param.ip
-        );
+        result = await this.UpdateDomainRecord(param.apiKey, param.apiSecret, RRID.v6.rid, domain.RR, "AAAA", param.ip);
 
         log.write(
           `域名:${param.domainName},IPv6地址为：${param.ip},結果:${result}`,
@@ -120,14 +75,7 @@ export class DDNS {
       }
     } else {
       //没有v4的解析记录存在
-      result = await this.AddDomainRecord(
-        param.apiKey,
-        param.apiSecret,
-        domain.domain,
-        domain.RR,
-        "AAAA",
-        param.ip
-      );
+      result = await this.AddDomainRecord(param.apiKey, param.apiSecret, domain.domain, domain.RR, "AAAA", param.ip);
       log.write(
         `域名:${param.domainName},IPv6地址为：${param.ip},結果:${result}`,
         "Warring",
@@ -149,11 +97,7 @@ export class DDNS {
       accessKeySecret: apiSecret,
       endpoint: "https://alidns.aliyuncs.com",
       apiVersion: "2015-01-09",
-    }).request(
-      "DescribeDomainRecords",
-      { DomainName: domainName },
-      { method: "POST" }
-    );
+    }).request("DescribeDomainRecords", { DomainName: domainName }, { method: "POST" });
 
     const RRExists4 = result.DomainRecords.Record.findIndex((v) => {
       if (v.RR === RR && v.Type === "A") return true;
@@ -198,11 +142,7 @@ export class DDNS {
         accessKeySecret: apiSecret,
         endpoint: "https://alidns.aliyuncs.com",
         apiVersion: "2015-01-09",
-      }).request(
-        "AddDomainRecord",
-        { DomainName, RR, Type, Value, TTL },
-        { method: "POST" }
-      );
+      }).request("AddDomainRecord", { DomainName, RR, Type, Value, TTL }, { method: "POST" });
 
       return true;
     } catch (error) {
@@ -227,11 +167,7 @@ export class DDNS {
         accessKeySecret: apiSecret,
         endpoint: "https://alidns.aliyuncs.com",
         apiVersion: "2015-01-09",
-      }).request(
-        "UpdateDomainRecord",
-        { RecordId, RR, Type, Value, TTL },
-        { method: "POST" }
-      );
+      }).request("UpdateDomainRecord", { RecordId, RR, Type, Value, TTL }, { method: "POST" });
 
       return true;
     } catch (error) {
