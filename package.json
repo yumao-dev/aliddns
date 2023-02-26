@@ -21,7 +21,7 @@
   "homepage": "https://github.com/yumao-dev/aliddns#readme",
   "dependencies": {
     "ajv": "^8.12.0",
-    "yanyu-helper": "^1.0.21",
+    "yanyu-helper": "^2.1.24",
     "ip-address": "^8.1.0",
     "@alicloud/pop-core": "^1.7.12"
   },
